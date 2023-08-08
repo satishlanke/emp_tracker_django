@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-6">
+        <h2 class="page-title">View Users</h2>
+      </div>
+      <div class="col-6 text-end">
+        <a class="btn btn-primary" href="{% url 'create_user' %}">Add User</a>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="container mt-3">
+    <div class="table-responsive">          
+      <table class="table table-hover table-bordered">
+        <thead class="table-light text-center">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Designation</th>
+            <th scope="col">Role</th>
+            <th scope="col">Status</th>
+            <th scope="col">Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{user.id}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.designation.name}}</td>
+            <td>
+              <span class="badge bg-secondary">{{user.role.name}}</span>
+            </td>
+            <td><p class="badge bg-success">{{user.is_active}}</p></td>
+            <td><a  href={% url 'edit_user' user.id %} tabindex="-1" aria-disabled="true">edit</a>
+            </td>
+          </tr>
+          {% endfor %}
+          
+        </tbody>
+      </table>
+      <nav aria-label="...">
+        <ul class="pagination">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">2</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  {% endblock %}

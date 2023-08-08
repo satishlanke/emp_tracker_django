@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-center">Edit User</h3>
+          </div>
+          <div class="card-body">
+            <form id="addProjectForm"  method="post" action="{% url 'edit_user' userdata.id %}" novalidate>
+
+              {% csrf_token %}
+              <input type="hidden" name="user_id" id="user_id" value="{{userdata.id}}" />
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="userTypeId" class="form-label">User Type ID</label>
+                    <input type="text" name="userTypeId" value="{{userdata.userTypeId}}" class="form-control" id="userTypeId" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="employeeId" class="form-label">Employee ID</label>
+                    <input type="text" name="emp_id" value="{{userdata.emp_id}}" class="form-control" id="employeeId" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="firstname" class="form-label">First Name</label>
+                    <input type="text" name="first_name"  value="{{userdata.first_name}}"class="form-control" id="firstname" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="lastname" class="form-label">Last Name</label>
+                    <input type="text" name="last_name" value="{{userdata.last_name}}" class="form-control" id="lastname" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username"value="{{userdata.username}}" class="form-control" id="username" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input name="password" type="password" value="{{userdata.password}}" class="form-control" id="password" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="organizationName" class="form-label">Organization Name</label>
+                    <input type="text" name="org_name" value="{{userdata.org_name}}" class="form-control" id="organizationName" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                    <input type="date" name="date_of_birth" value="{{userdata.date_of_birth | date:'Y-m-d'}}" class="form-control" id="dateOfBirth" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="gender" class="form-label">Gender</label>
+                    <select name="gender" class="form-control" id="gender" required>
+                    {% if userdata.gender %}
+                    <option value="{{userdata.gender}}">{{userdata.gender}}</option>
+                    {% endif %}
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="primaryPhone" class="form-label">Primary Phone</label>
+                    <input name="primary_phn" value="{{userdata.primary_phn}}" type="text" class="form-control" id="primaryPhone" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="secondaryPhone" class="form-label">Secondary Phone</label>
+                    <input name="secondary_phn" value="{{userdata.secondary_phn}}" type="text" class="form-control" id="secondaryPhone" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email"  value="{{userdata.email}}" name="email" class="form-control" id="email" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="status" class="form-label">Designation</label>
+                    <select name="designation" class="form-control" id="status" required>
+                        {% if userdata.designation %}
+                    <option value="{{userdata.designation.id}}">{{userdata.designation.name}}</option>
+                    {% endif %}
+                      {% for item in designations %}
+                      <option value="{{item.id}}">{{item.name}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select name="status" class="form-control" id="status" required>
+                        {% if userdata.designation %}
+                        <option value="{{userdata.status.id}}">{{userdata.status.status_name}}</option>
+                        {% endif %}
+                      {% for item in status %}
+                      <option value="{{item.id}}">{{item.status_name}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="status" class="form-label">Role</label>
+                    <select name="role" class="form-control"  required>
+                        {% if userdata.role %}
+                        <option value="{{userdata.role.id}}">{{userdata.role.name}}</option>
+                        {% endif %}
+                      {% for item in roles %}
+                      <option value="{{item.id}}">{{item.name}}</option>
+                      {% endfor %}
+                    </select>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-success">Update</button>
+                <a href="{% url 'users_view' %}" class="btn btn-secondary">Cancel</a>
+              </div>
+              <div class="text-center">
+                
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  {% comment %} <script>
+    // $(document).ready(function() {
+    //   // Form validation
+    //   $("#addUserForm").submit(function(event) {
+    //     event.preventDefault();
+    //     if (this.checkValidity() === false) {
+    //       event.stopPropagation();
+    //     } else {
+    //       // Perform form submission
+    //       submitUserForm();
+    //     }
+    //     $(this).addClass("was-validated");
+    //   });
+
+    //   function submitUserForm() {
+    //     // Get form data and perform submission logic
+    //     var userTypeId = $("#userTypeId").val();
+    //     var employeeId = $("#employeeId").val();
+    //     var firstName = $("#firstName").val();
+    //     var lastName = $("#lastName").val();
+    //     var username = $("#username").val();
+    //     var password = $("#password").val();
+    //     var organizationName = $("#organizationName").val();
+    //     var dateOfBirth = $("#dateOfBirth").val();
+    //     var gender = $("input[name='gender']:checked").val();
+    //     var primaryPhone = $("#primaryPhone").val();
+    //     var secondaryPhone = $("#secondaryPhone").val();
+    //     var email = $("#email").val();
+    //     var designation = $("#designation").val();
+    //     var status = $("#status").val();
+
+    //     // Validate additional fields here
+    //     if (userTypeId.trim() === "") {
+    //       $("#userTypeId").addClass("is-invalid");
+    //       return false;
+    //     } else {
+    //       $("#userTypeId").removeClass("is-invalid");
+    //     }
+
+    //     // Perform the form submission here
+    //     // ...
+
+    //     // Reset the form
+    //     $("#addUserForm")[0].reset();
+    //     $("#addUserForm").removeClass("was-validated");
+    //   }
+    // });
+  </script> {% endcomment %}
+
+{% endblock %}

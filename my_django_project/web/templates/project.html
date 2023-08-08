@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-6">
+        <h2 class="page-title">View Projects</h2>
+      </div>
+      <div class="col-6 text-end">
+        <a class="btn btn-primary" href="{% url 'addProject' %}">Add Project</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <div class="table-responsive">          
+      <table class="table table-hover table-bordered">
+        <thead class="table-light text-center">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Workflow</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Number of Chapters</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in projects%}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td><a href="chapter.html">{{item.proj_name}}</a></td>
+            <td>{{item.proj_workflowType.workflow_name}}</td>
+            <td>{{item.proj_isbn}}</td>
+            <td>{{item.proj_no_of_chapters}}</td>
+            <td><p class="badge rounded-pill bg-light text-dark">{{item.due_date}}</p></td>
+            <td><p class="badge rounded-pill bg-primary">{{item.proj_status}}</p> <a  href={% url 'editProject' item.id %} tabindex="-1" aria-disabled="true">edit</a></td>
+          </tr>
+          {% endfor %}
+         
+        </tbody>
+      </table>
+      <nav aria-label="...">
+        <ul class="pagination">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">2</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  {% endblock %}

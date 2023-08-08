@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>User Progress View</h3>
+
+<h4>User Attendance</h4>
+<ul>
+    {% for item in userinout %}
+    <li>
+        Date: {{ item.date }}, Total Duration: {{ item.inout_duration }}
+    </li>
+    {% endfor %}
+</ul>
+
+<h4>User Breaks</h4>
+<ul>
+    {% for item in breaks %}
+    <li>
+        Date: {{ item.date }}, Total Duration: {{ item.break_duration }}
+    </li>
+    {% endfor %}
+</ul>
+<h4>User Productivity</h4>
+<ul>
+    {% for item in result %}
+    <li>
+        
+        Date: {{ item.date }}, Total Session: {{ item.inout_duration }},Total Breaks: {{ item.break_duration }} ,
+        Total Difference: {{ item.difference }}
+    </li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}

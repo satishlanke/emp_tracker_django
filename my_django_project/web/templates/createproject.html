@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-center">Create Project</h3>
+          </div>
+          <div class="card-body">
+            {% if item.id %}
+            <form id="addProjectForm"  method="post" action="{% url 'editProject' item.id %}" novalidate>
+              {% else %}
+            <form id="addProjectForm"  method="post" action="{% url 'addProject' %}" novalidate>
+              {% endif %}
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" name="proj_name" value="{{item.proj_name}}" class="form-control" id="name" required>
+                    <div class="invalid-feedback">
+                      Name is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="status" class="form-label">Workflow</label>
+                    <select name="proj_workflowType" class="form-select" id="status" required>
+                      {% if item.proj_workflowType %}
+                      <option value="{{item.proj_workflowType.id}}">{{item.proj_workflowType.workflow_name}}</option>
+                        {% else %}
+                        <option value="">Select Workflow</option>
+                        {% endif %}
+                      {% for work in workflows %}
+                      <option value="{{work.id}}">{{work.workflow_name}}</option>
+                      {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">
+                      Workflow ID is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="isbn" class="form-label">ISBN</label>
+                    <input name="proj_isbn" value="{{item.proj_isbn}}" type="text" class="form-control" id="isbn" required>
+                    <div class="invalid-feedback">
+                      ISBN is required.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="numberOfChapters" class="form-label">Number of Chapters</label>
+                    <input name="proj_no_of_chapters" value="{{item.proj_no_of_chapters}}" type="number" class="form-control" id="numberOfChapters" required>
+                    <div class="invalid-feedback">
+                      Number of Chapters is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="dueDate" class="form-label">Due Date</label>
+                    <input value="{{item.due_date| date:'Y-m-d'}}" type="date" class="form-control" name="due_date" required>
+                    <div class="invalid-feedback">
+                      Due Date is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+
+                    <select name="proj_status" class="form-select" id="status" required>
+
+                      {% if item.proj_status %}
+                        <option value="{{item.proj_status.id}}">{{item.proj_status.status_name}}</option>
+                        {% else %}
+                        <option value="">select status</option>
+                        {% endif %}
+                      {% for item_s in status %}
+                      <option value="{{item_s.id}}">{{item_s.status_name}}</option>
+                      {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">
+                      Status is required.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-success">Save</button>
+                <a href="{% url 'project_view' %}" class="btn btn-secondary">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Form validation
+      $("#addProjectForm").submit(function(event) {
+        event.preventDefault();
+        if (this.checkValidity() === false) {
+          event.stopPropagation();
+        } else {
+          // Perform form submission
+          submitProjectForm();
+        }
+        $(this).addClass("was-validated");
+      });
+
+      function submitProjectForm() {
+        // Get form data and perform submission logic
+        var name = $("#name").val();
+        var workflowId = $("#workflowId").val();
+        var isbn = $("#isbn").val();
+        var numberOfChapters = $("#numberOfChapters").val();
+        var dueDate = $("#dueDate").val();
+        var status = $("#status").val();
+
+        // Validate additional fields here
+        if (name.trim() === "") {
+          $("#name").addClass("is-invalid");
+          return false;
+        } else {
+          $("#name").removeClass("is-invalid");
+        }
+
+        // Perform the form submission here
+        // ...
+
+        // Reset the form
+        $("#addProjectForm")[0].reset();
+        $("#addProjectForm").removeClass("was-validated");
+      }
+    });
+
+
+  </script> -->
+  {% endblock %}

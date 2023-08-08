@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Project Report</h5>
+            <p class="card-text">Projects status with number of chapters completed.</p>
+            <a href="#" class="btn btn-primary">Get</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Chapter Detail</h5>
+            <p class="card-text">Chapters status with the stages completed.</p>
+            <a href="#" class="btn btn-primary">Get</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">User Progress</h5>
+            <p class="card-text">Users status with current progresses.</p>
+            <a href="{%  url 'user_progress_view' %}" class="btn btn-primary">Get</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+  

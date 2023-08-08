@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-6">
+        <h2 class="page-title">Add Chapters</h2>
+        Project: 
+        <a class="link-info" data-bs-toggle="collapse" href="#collapseProject" role="button" aria-expanded="false" aria-controls="collapseProject">
+          Living with Science
+        </a>
+      </div>
+      <div class="col-6 text-end">
+        <input type="hidden" name="number-of-chapters" id="number-of-chapters" value="7">
+        <button class="btn btn-primary position-relative" id="generate-chapter-btn">
+          Generate Chapters
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="chapter-count-badge">
+            7
+            <span class="visually-hidden">Number of chapters in project</span>
+          </span>
+        </button>
+      </div>
+      <div class="col-12 mb-3">
+        <div class="collapse" id="collapseProject">
+          <div class="card card-body">
+            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <div class="table-responsive">
+      <form id="addChapterForm" action="chapter.html" novalidate>
+        <table class="table table-hover table-bordered chapter-form-table">
+          <thead class="table-light text-center">
+            <tr>
+              <th scope="col">Chapter Name</th>
+              <th scope="col">Number of Pages</th>
+              <th scope="col">Due Date</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="no-data">
+              <td colspan="4">No Data</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-outline-secondary" id="add-row">+</button>
+        <div class="text-center">
+          <button type="submit" class="btn btn-success">Save</button>
+          <a href="chapter.html" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    var numberOfChapterInPage = 0;
+    $(document).ready(function() {
+      // Form validation
+      $("#addChapterForm").submit(function(event) {
+        event.preventDefault();
+        if (this.checkValidity() === false) {
+          event.stopPropagation();
+        } else {
+          // Perform form submission
+          submitChapterForm();
+        }
+        $(this).addClass("was-validated");
+      });
+
+      function submitChapterForm() {
+        // Get form data and perform submission logic
+        var projectId = $("#projectId").val();
+        var name = $("#name").val();
+        var numberOfPages = $("#numberOfPages").val();
+        var dueDate = $("#dueDate").val();
+        var status = $("#status").val();
+
+        // Validate additional fields
+        if (projectId.trim() === "") {
+          $("#projectId").addClass("is-invalid");
+          return false;
+        } else {
+          $("#projectId").removeClass("is-invalid");
+        }
+
+        if (name.trim() === "") {
+          $("#name").addClass("is-invalid");
+          return false;
+        } else {
+          $("#name").removeClass("is-invalid");
+        }
+
+        if (numberOfPages <= 0) {
+          $("#numberOfPages").addClass("is-invalid");
+          return false;
+        } else {
+          $("#numberOfPages").removeClass("is-invalid");
+        }
+
+        // Perform the form submission here
+        // ...
+
+        // Reset the form
+        $("#addChapterForm")[0].reset();
+        $("#addChapterForm").removeClass("was-validated");
+      }
+
+      $("#generate-chapter-btn").click(function(event) {
+        event.preventDefault();
+        var rowCount = $('.chapter-form-table tbody tr').length;
+        if(rowCount == 1) {
+          var numberOfchapters = $("#number-of-chapters").val();
+          var chapterEntryTemplate = '<tr> <td> <div class="mb-3"> <input type="text" class="form-control" id="NAME" value="CHAPTER-NAME" required> </div> </td> <td> <div class="mb-3"> <input type="number" class="form-control" id="numberOfPages#NUM#" required> </div> </td> <td> <div class="mb-3"> <input type="date" class="form-control" id="dueDate#NUM#" required> </div> </td> <td> <div class="mb-3"> <select class="form-select" id="status#NUM#" required> <option value="active" selected>Active</option> <option value="inactive">Inactive</option> <option value="completed">Completed</option> </select> </div> </td> </tr>';
+
+          var individualchapterEntry;
+          for (var i = numberOfChapterInPage + 1; i <= numberOfchapters; i++) {
+            individualchapterEntry = chapterEntryTemplate.replace('NAME', 'name ' + i);
+            individualchapterEntry = chapterEntryTemplate.replace('CHAPTER-NAME', 'Chapter ' + i);
+            $(".chapter-form-table tbody").append(individualchapterEntry);
+          }
+          $('#no-data').hide();
+          numberOfChapterInPage = parseInt(numberOfchapters);
+        }
+        $('#generate-chapter-btn').prop('disabled', true);
+        $('#chapter-count-badge').hide();
+        
+        $("#addChapterForm").removeClass("was-validated");
+      });
+
+      $("#add-row").click(function(event) {
+        event.preventDefault();
+        var chapterEntryTemplate = '<tr> <td> <div class="mb-3"> <input type="text" class="form-control" id="name#NUM#" value="Chapter" required> </div> </td> <td> <div class="mb-3"> <input type="number" class="form-control" id="numberOfPages#NUM#" required> </div> </td> <td> <div class="mb-3"> <input type="date" class="form-control" id="dueDate#NUM#" required> </div> </td> <td> <div class="mb-3"> <select class="form-select" id="status#NUM#" required> <option value="active" selected>Active</option> <option value="inactive">Inactive</option> <option value="completed">Completed</option> </select> </div> </td> </tr>';
+        console.log()
+        numberOfChapterInPage = numberOfChapterInPage + 1;
+        individualchapterEntry = chapterEntryTemplate.replace('#NUM#',numberOfChapterInPage);
+        individualchapterEntry = chapterEntryTemplate.replace('Chapter', 'Chapter ' + numberOfChapterInPage);
+        $(".chapter-form-table tbody").append(individualchapterEntry);
+        
+        $('#no-data').hide();
+        $('#generate-chapter-btn').prop('disabled', true);
+        $('#chapter-count-badge').hide();
+        
+        $("#addChapterForm").removeClass("was-validated");
+      });
+    });
+
+  </script>
+{% endblock %}

@@ -10,9 +10,9 @@
           </div>
           <div class="card-body">
             {% if item.id %}
-            <form id="addProjectForm"  method="post" action="{% url 'editProject' item.id %}" novalidate>
+            <form id="addProjectForm"  method="post" action="{% url 'editProject' item.id %}">
               {% else %}
-            <form id="addProjectForm"  method="post" action="{% url 'addProject' %}" novalidate>
+            <form id="addProjectForm"  method="post" action="{% url 'addProject' %}">
               {% endif %}
               {% csrf_token %}
               <div class="row">

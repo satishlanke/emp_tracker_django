@@ -244,7 +244,7 @@
               
                 
             <div id="signin_div">
-                <form name="login"  method="post" novalidate="">
+                <form name="login"  method="post">
               {% csrf_token %}   <!-- Include CSRF token -->
 
                     <div class="signin_head">
@@ -268,7 +268,7 @@
                       {% endif %}
                             
                             </select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 50px; display: none;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="-1" aria-labelledby="select2-country_code_select-container"><span class="select2-selection__rendered" id="select2-country_code_select-container" title="India (+91)">+91</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                            <input id="username" placeholder="Email address or mobile number"  type="text" class="textbox" name="username" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}" required >
+                            <input id="username" placeholder="Enter your Username"  type="text" class="textbox" name="username" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}" required >
                             <br />
                             <input id="password" placeholder="Enter your Password"  type="password" class="textbox" name="password" required >
                             

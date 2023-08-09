@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
-
+from django.conf.urls import (handler400, handler403, handler404, handler500)
+handler404 = 'web.views.handler404'
+handler500 = 'web.views.handler500'
 urlpatterns = [
     path('dashboard_view/', views.dashboard_view, name='dashboard_view'),
 

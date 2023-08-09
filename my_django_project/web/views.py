@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.template import RequestContext
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth import logout
@@ -274,37 +275,34 @@ def report_view(request):
         return render(request,'report.html')
     
 def user_progress_view(request):
-    user= CustomUser.objects.get(id=request.user.id)
-    inout_queryset = UserAttendance.objects.filter(user=user,logout_time__isnull=False).annotate(
-    date=TruncDate('login_time')
-        ).annotate(
-            duration1=ExpressionWrapper(F('logout_time') - F('login_time'), output_field=DurationField())
-        ).values('date').annotate(
-            inout_duration=Sum('duration1')
-        ).order_by('date')
-    
-    break_queryset = Break.objects.filter(user=user,end_time__isnull=False).annotate(
-    date=TruncDate('start_time')
-        ).annotate(
-            duration1=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
-        ).values('date').annotate(
-            break_duration=Sum('duration1')
-        ).order_by('date')
-    # for entry in break_queryset:
-    #     print(entry)
-    #     print(f"Date: {entry['date']}, Total Duration: {entry['break_duration']}")
+    try:
 
-    # for entry in inout_queryset:
-    #     print(entry)
-
-    #     print(f"Date: {entry['date']}, Total Duration: {entry['inout_duration']}")
+        user= CustomUser.objects.get(id=request.user.id)
+        inout_queryset = UserAttendance.objects.filter(user=user,logout_time__isnull=False).annotate(
+        date=TruncDate('login_time')
+            ).annotate(
+                duration1=ExpressionWrapper(F('logout_time') - F('login_time'), output_field=DurationField())
+            ).values('date').annotate(
+                inout_duration=Sum('duration1')
+            ).order_by('date')
+        
+        break_queryset = Break.objects.filter(user=user,end_time__isnull=False).annotate(
+        date=TruncDate('start_time')
+            ).annotate(
+                duration1=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
+            ).values('date').annotate(
+                break_duration=Sum('duration1')
+            ).order_by('date')
 
     
-    result = calculate_total_durations(break_queryset,inout_queryset)
+        result = calculate_total_durations(break_queryset,inout_queryset)
+        context = {'breaks':break_queryset,
+               'userinout':inout_queryset,"result":result}
+    except Exception as e:
+        print(e)
     # print(result,"dsdkajsdkljasdlk")
     
-    context = {'breaks':break_queryset,
-               'userinout':inout_queryset,"result":result}
+    
     return render(request, 'user_report.html',context)
 
 import datetime
@@ -329,3 +327,18 @@ def calculate_total_durations(list1, list2):
     for date, data in total_durations.items():
         data['difference'] = data['inout_duration'] - data['break_duration']
     return list(total_durations.values())
+
+
+
+def handler404(request, *args, **argv):
+    response = render('404.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
+
+
+def handler500(request, *args, **argv):
+    response = render('500.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response

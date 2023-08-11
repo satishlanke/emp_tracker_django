@@ -222,6 +222,11 @@
   border: 1px solid #f5c6cb;
   color: #721c24;
  }
+ .img-logo-main{
+  width: 100px;
+    border-radius: 10%;
+    height: 50px
+ }
     </style>
     
             <div class="load-bg fade load-fade" style="display: none;">
@@ -239,11 +244,13 @@
 
 
           <div class="sign_lanke_container">
-
             <div class="signin_box" id="signin_flow">
               
-                
+              <div>
+                <img class="img-logo-main" src="../static/images/logo.jpg"/>
+              </div>
             <div id="signin_div">
+              
                 <form name="login"  method="post">
               {% csrf_token %}   <!-- Include CSRF token -->
 
@@ -353,7 +360,7 @@
 <div class="container">
 <div class="banner1_img" style="background-image: url('https://accounts.zoho.in/v2/components/images/passwordless_illustration2x.png');"></div>
 <div class="banner1_heading">Passwordless sign-in</div>
-<div style="" class="banner1_content">Move away from risky passwords and experience one-tap access to Tracker. Download and install OneAuth. </div>
+<div  class="banner1_content">Move away from risky passwords and experience one-tap access to Tracker. Download and install OneAuth. </div>
 <a class="banner1_href" href="#" >Learn more</a>
 </div>      
 
@@ -411,7 +418,7 @@
 <div class="container">
 <div class="banner1_img" style="background-image: url('https://accounts.zoho.in/v2/components/images/mfa_illustration2x.png');"></div>
 <div class="banner1_heading">MFA for all accounts</div>
-<div style="" class="banner1_content">Secure online accounts with OneAuth 2FA. Back up OTP secrets and never lose access to your accounts. </div>
+<div  class="banner1_content">Secure online accounts with OneAuth 2FA. Back up OTP secrets and never lose access to your accounts. </div>
 <!-- <a class="banner1_href" id="banner_learn" href="https://zurl.to/ZS_oaauthenticator" target="_blank">Learn more</a> -->
 </div>      
 
@@ -469,7 +476,7 @@
 <div class="container">
 <!-- <div class="banner1_img" style="background-image: url('https://static.zohocdn.com/iam/v2/components/images/Additional-verification.1c205044575577c75e8b933a5d3f3d71.svg');"></div> -->
 <div class="banner1_heading">Enhanced sign-in security</div>
-<div style="" class="banner1_content">Using only a password to sign in? To strengthen the security of your account, we’re introducing additional verification for any unusual sign-in attempt. </div>
+<div  class="banner1_content">Using only a password to sign in? To strengthen the security of your account, we’re introducing additional verification for any unusual sign-in attempt. </div>
 <a class="banner1_href" id="banner_learn" href="https://zurl.to/add_verify" target="_blank">Learn more</a>
 </div>      
 

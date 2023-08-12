@@ -18,7 +18,7 @@
               <div class="row">
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">Project Name</label>
                     <input type="text" name="proj_name" value="{{item.proj_name}}" class="form-control" id="name" required>
                     <div class="invalid-feedback">
                       Name is required.
@@ -93,6 +93,11 @@
                     </div>
                   </div>
                 </div>
+                <label for="status" class="form-label">Project Manager</label>
+
+                <input class="form-control" type="text" id="autocomplete-input">
+                <input type="hidden" id="selected-value" name="selected_value">  <!-- Hidden field to store selected value -->
+                <ul id="autocomplete-results"></ul>
               </div>
               <div class="text-center">
                 <button type="submit" class="btn btn-success">Save</button>
@@ -104,7 +109,69 @@
       </div>
     </div>
   </div>
+  {% comment %} <script>
+    $(document).ready(function () {
+        $("#autocomplete-input").on("input", function () {
+            var query = $(this).val();
+            if (query.length >= 2) {  // Adjust the minimum characters required for autocomplete
+                $.ajax({
+                    url: "{% url 'autocomplete' %}",
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                    data: { 'term': query },
+                    dataType: "json",
+                    success: function (data) {
+                        var $results = $("#autocomplete-results");
+                        $results.empty();
+                        for (var i = 0; i < data.length; i++) {
+                            $results.append("<li>" + data[i].label + "</li>");
+                        }
+                    }
+                });
+            } else {
+                $("#autocomplete-results").empty();
+            }
+        });
+    });
+</script> {% endcomment %}
+<script>
+  $(document).ready(function () {
+      // Function to handle selection
+      function handleSelection(selectedValue) {
+          $("#autocomplete-input").val(selectedValue.label);  // Set input value to selected label
+          $("#selected-value").val(selectedValue.id);  // Set hidden field value to selected ID
+          $("#autocomplete-results").empty();  // Clear the autocomplete results
+      }
 
+      $("#autocomplete-input").on("input", function () {
+          var query = $(this).val();
+          if (query.length >= 2) {
+              $.ajax({
+                  url: "{% url 'autocomplete' %}",
+                  headers: { "X-Requested-With": "XMLHttpRequest" },
+                  data: { 'term': query },
+                  dataType: "json",
+                  success: function (data) {
+                      var $results = $("#autocomplete-results");
+                      $results.empty();
+                      for (var i = 0; i < data.length; i++) {
+                          var option = "<li data-value='" + data[i].id + "'>" + data[i].label + "</li>";
+                          $results.append(option);
+                      }
+
+                      // Handle selection from the results
+                      $results.find("li").click(function () {
+                          var selectedId = $(this).data("value");
+                          var selectedLabel = $(this).text();
+                          handleSelection({ id: selectedId, label: selectedLabel });
+                      });
+                  }
+              });
+          } else {
+              $("#autocomplete-results").empty();
+          }
+      });
+  });
+</script>
   <!-- jQuery -->
   <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>

@@ -4,7 +4,7 @@
   <div class="container mt-3">
     <div class="row">
       <div class="col-6">
-        <h2 class="page-title">View Users</h2>
+        <h3 class="page-title">View Users</h3>
       </div>
       <div class="col-6 text-end">
         <a class="btn btn-primary" href="{% url 'create_user' %}">Add User</a>
@@ -24,7 +24,7 @@
             <th scope="col">Designation</th>
             <th scope="col">Role</th>
             <th scope="col">Status</th>
-            <th scope="col">Edit</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -37,15 +37,48 @@
               <span class="badge bg-secondary">{{user.role.name}}</span>
             </td>
             <td><p class="badge bg-success">{{user.is_active}}</p></td>
-            <td><a  href={% url 'edit_user' user.id %} tabindex="-1" aria-disabled="true">edit</a>
+            <td>
+              <a href={% url 'edit_user' user.id %} >
+                <button type="button" class="btn btn-success btn-sm"><i class="fa fa-edit fa-lg"></i></button>
+            </a>
+            <a  href="#myModal" data-target="#myModal" data-toggle="modal" onClick = "openSolution('{{ user.id }}')">
+              <button type="button"  class="btn btn-danger btn-sm"><i class="fa fa-trash fa-lg"></i></button>
+          </a>   
             </td>
           </tr>
           {% endfor %}
           
         </tbody>
       </table>
-      
+      <div class="modal fade" tabindex="-1" id="myModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Delete User</h3>
+                </div>
+                <div class="modal-body background-color: #FFFFFF;">
+                    <p>Do you want to really delete?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="confirmationYes()" href="#">Yes</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                </div>
+            </div>  
+        </div>
+    </div>
+
+</div>        
     </div>
   </div>
+  <script>            
+    function openSolution(id){               
+        $('#myModal').data('id', id);                
+    } 
+    
+    function confirmationYes(){
+        var id = $('#myModal').data('id');                                         
+        window.location.href ="/delete_user/"+id+"";
+    }                                                                      
+</script> 
   
   {% endblock %}

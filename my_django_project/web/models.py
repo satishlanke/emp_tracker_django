@@ -106,6 +106,7 @@ class Projects(models.Model):
     proj_status = models.ForeignKey(Status,on_delete=models.CASCADE)
     proj_no_of_chapters = models.IntegerField(null=True)
     due_date=models.DateField(null=True,blank=True)
+    proj_manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.proj_name

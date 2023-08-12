@@ -12,9 +12,17 @@ urlpatterns = [
     path('users_view/', views.users_view, name='users_view'),
     path('create_user/', views.create_user, name='create_user'),
     path('edit_user/<int:id>/', views.edit_user, name='edit_user'),
+    path('delete_user/<int:id>/', views.delete_user, name='delete_user'),
+
 
     path('addProject/', views.addProject, name='addProject'),
-     path('editproject/<int:id>/', views.editProject, name='editProject'),
+    path('editproject/<int:id>/', views.editProject, name='editProject'),
+    path('delete_project/<int:id>/', views.delete_project, name='delete_project'),
+    path('autocomplete/', views.autocomplete, name='autocomplete'),
+
+    path('autocomplete_userid/', views.autocomplete_userid, name='autocomplete_userid'),
+
+
     path('logout_view/', views.logout_view, name='logout_view'),
     path('start_break/', views.start_break, name='start_break'),
     path('report_view/', views.report_view, name='report_view'),

@@ -24,6 +24,8 @@
             <th scope="col">Number of Chapters</th>
             <th scope="col">Due Date</th>
             <th scope="col">Status</th>
+            <th class="not-export-column" scope="col">Actions</th>
+
           </tr>
         </thead>
         <tbody>
@@ -35,14 +37,46 @@
             <td>{{item.proj_isbn}}</td>
             <td>{{item.proj_no_of_chapters}}</td>
             <td><p class="badge rounded-pill bg-light text-dark">{{item.due_date}}</p></td>
-            <td><p class="badge rounded-pill bg-primary">{{item.proj_status}}</p> <a  href={% url 'editProject' item.id %} tabindex="-1" aria-disabled="true">edit</a></td>
+            <td><p class="badge rounded-pill bg-primary">{{item.proj_status}}</p> </td>
+            <td>
+              <a href={% url 'editProject' item.id %} >
+                <button type="button" class="btn btn-success btn-sm"><i class="fa fa-edit fa-lg"></i></button>
+            </a>
+            <a  href="#myModal" data-target="#myModal" data-toggle="modal" onClick = "openSolution('{{ item.id }}')">
+              <button type="button"  class="btn btn-danger btn-sm"><i class="fa fa-trash fa-lg"></i></button>
+          </a>   
+            </td>
           </tr>
           {% endfor %}
          
         </tbody>
       </table>
-      
+      <div class="modal fade" tabindex="-1" id="myModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Delete Project</h3>
+                </div>
+                <div class="modal-body background-color: #FFFFFF;">
+                    <p>Do you want to really delete?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="confirmationYes()" href="#">Yes</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                </div>
+            </div>  
+        </div>
+    </div>
     </div>
   </div>
-
+  <script>            
+    function openSolution(id){               
+        $('#myModal').data('id', id);                
+    } 
+    
+    function confirmationYes(){
+        var id = $('#myModal').data('id');                                         
+        window.location.href ="/delete_project/"+id+"";
+    }                                                                      
+</script> 
   {% endblock %}

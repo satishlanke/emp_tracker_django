@@ -1,52 +1,134 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 
-<div style="padding: 3%;">
-    <h3>User Progress View</h3>
+<div style="padding: 3%">
+  <h4>User Progress View</h4>
 
-<h4>User Attendance</h4>
-<ul>
+  {% comment %} <h4>User Attendance</h4>
+  <ul>
     {% for item in userinout %}
-    <li>
-        Date: {{ item.date }}, Total Duration: {{ item.inout_duration }}
-    </li>
+    <li>Date: {{ item.date }}, Total Duration: {{ item.inout_duration }}</li>
     {% endfor %}
-</ul>
+  </ul>
 
-<h4>User Breaks</h4>
-<ul>
+  <h4>User Breaks</h4>
+  <ul>
     {% for item in breaks %}
-    <li>
-        Date: {{ item.date }}, Total Duration: {{ item.break_duration }}
-    </li>
+    <li>Date: {{ item.date }}, Total Duration: {{ item.break_duration }}</li>
     {% endfor %}
-</ul>
-<h4>User Productivity</h4>
-<ul>
+  </ul>
+  <h4>User Productivity</h4>
+  <ul>
     {% for item in result %}
     <li>
-        
-        Date: {{ item.date }}, Total Session: {{ item.inout_duration }},Total Breaks: {{ item.break_duration }} ,
-        Total Difference: {{ item.difference }}
+      Date: {{ item.date }}, Total Session: {{ item.inout_duration }},Total
+      Breaks: {{ item.break_duration }} , Total Difference: {{ item.difference
+      }}
     </li>
     {% endfor %}
-</ul>
+  </ul> {% endcomment %}
 
-<div  class="tablediv shadow_boox">
+  <div class="shadow_boox user_report_form">
+    <form id="" method="post" action="{% url 'addProject' %}">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-">
+          <div class="mb-3">
+            <label for="status" class="form-label">User Name</label>
+            <input
+              class="form-control"
+              type="text"
+              id="autocomplete-input_usrId"
+            />
+            <input
+              type="hidden"
+              id="selected-value_usersid"
+              name="selected_value"
+            />
+            <!-- Hidden field to store selected value -->
+            <ul id="autocomplete-results_userId"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="">
+          <div class="mb-3">
+            <label for="dueDate" class="form-label">Due Date</label>
+            <input
+              value="{{item.due_date| date:'Y-m-d'}}"
+              type="date"
+              class="form-control"
+              name="due_date"
+              required
+            />
+          </div>
+        </div>
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{% url 'dashboard_view' %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="tablediv shadow_boox">
     <table class="table table-hover">
-        <thead>
-            <th>UserID</th>
-            <th>Username</th>
-            <th>Date</th>
-            <th>InTime</th>
-            <th>OutTime</th>
-            <th>Shift</th>
-            <th>Breaktime</th>
-            <th>Productivity in hours</th>
-    
-        </thead>
+      <thead>
+        <th>UserID</th>
+        <th>Username</th>
+        <th>Date</th>
+        <th>InTime</th>
+        <th>OutTime</th>
+        <th>Shift</th>
+        <th>Breaktime</th>
+        <th>Productivity in hours</th>
+      </thead>
     </table>
+  </div>
 </div>
-</div>
+<script>
+  $(document).ready(function () {
+    // Function to handle selection
+    function handleSelection(selectedValue) {
+      $("#autocomplete-input_usrId").val(selectedValue.label); // Set input value to selected label
+      $("#selected-value_usersid").val(selectedValue.id); // Set hidden field value to selected ID
+      $("#autocomplete-results_userId").empty(); // Clear the autocomplete results
+    }
+
+    $("#autocomplete-input_usrId").on("input", function () {
+      var query = $(this).val();
+      if (query.length >= 2) {
+        $.ajax({
+          url: "{% url 'autocomplete_userid' %}",
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+          data: { term: query },
+          dataType: "json",
+          success: function (data) {
+            var $results = $("#autocomplete-results_userId");
+            $results.empty();
+            for (var i = 0; i < data.length; i++) {
+              var option =
+                "<li data-value='" +
+                data[i].id +
+                "'>" +
+                data[i].label +
+                "</li>";
+              $results.append(option);
+            }
+
+            // Handle selection from the results
+            $results.find("li").click(function () {
+              var selectedId = $(this).data("value");
+              var selectedLabel = $(this).text();
+              handleSelection({ id: selectedId, label: selectedLabel });
+            });
+          },
+        });
+      } else {
+        $("#autocomplete-results_userId").empty();
+      }
+    });
+  });
+</script>
 
 {% endblock %}

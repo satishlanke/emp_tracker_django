@@ -104,6 +104,11 @@ def users_view(request):
     context = {"users":users}
     return render(request, 'user.html',context)
 
+def delete_user(request,id):
+    user =CustomUser.objects.get(id=id)
+    user.delete()
+    return redirect('users_view')
+
 def userInOut(user):
     try:
         UserAttendance.objects.filter(user=user, logout_time=None).latest('login_time')
@@ -152,7 +157,7 @@ def logout_view(request):
 @login_required
 def project_view(request):
     if request.method == 'GET':
-        projects = Projects.objects.all()
+        projects = Projects.objects.filter(proj_manager=request.user.id)
         print(request.user.id)
         context = {'projects':projects,}
         return render(request, 'project.html',context)
@@ -179,6 +184,8 @@ def addProject(request):
         status_id= Status.objects.get(id=proj_status)
         proj_no_of_chapters= request.POST.get('proj_no_of_chapters')
         due_date = request.POST.get('due_date')
+        proj_manager = request.POST.get('selected_value')
+        user_proj_manager =CustomUser.objects.get(id=proj_manager)
         try:
 
             project = Projects.objects.create(
@@ -187,7 +194,9 @@ def addProject(request):
             proj_workflowType=workflow_id,
             proj_status=status_id,
             proj_no_of_chapters=proj_no_of_chapters,
-            due_date=due_date
+            due_date=due_date,
+            proj_manager=user_proj_manager
+
             )
         except Exception as e:
             raise e
@@ -210,19 +219,14 @@ def editProject(request,id):
         proj_isbn = request.POST.get('proj_isbn')
         proj_workflowType = request.POST.get('proj_workflowType')
         proj_status = request.POST.get('proj_status')
+        proj_manager = request.POST.get('selected_value')
+        user_proj_manager =CustomUser.objects.get(id=proj_manager)
         workflow_id= WorkflowType.objects.get(id=proj_workflowType)
         status_id= Status.objects.get(id=proj_status)
         proj_no_of_chapters= request.POST.get('proj_no_of_chapters')
         due_date = request.POST.get('due_date')
         try:
-            # project = Projects.objects.get(id=id)
-            # project.proj_name=proj_name
-            # project.proj_isbn = proj_isbn
-            # project.proj_workflowType = workflow_id
-            # project.proj_status = status_id
-            # project.proj_no_of_chapters = proj_no_of_chapters
-            # project.due_date = due_date
-            # project.save()
+            
 
             Projects.objects.filter(id=id).update(
             proj_name=proj_name,
@@ -230,11 +234,35 @@ def editProject(request,id):
             proj_workflowType=workflow_id,
             proj_status=status_id,
             proj_no_of_chapters=proj_no_of_chapters,
-            due_date=due_date
+            due_date=due_date,
+            proj_manager=user_proj_manager
             )
         except Exception as e:
             raise e
         return redirect('project_view')
+
+def delete_project(request, id):
+    project = Projects.objects.get(id=id)
+    project.delete()
+    return redirect('project_view')
+
+def autocomplete(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest': 
+        role = RoleMaster.objects.get(id=request.user.role.id)
+        query = request.GET.get('term', '')
+        queryset = CustomUser.objects.filter(username__icontains=query,role=role)
+        print(queryset)
+        suggestions = [{'id': obj.pk, 'label': str(obj)} for obj in queryset]
+        return JsonResponse(suggestions, safe=False)
+    
+def autocomplete_userid(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest': 
+        # role = RoleMaster.objects.get(id=request.user.role.id)
+        query = request.GET.get('term', '')
+        queryset = CustomUser.objects.filter(username__icontains=query)
+        print(queryset)
+        suggestions = [{'id': obj.pk, 'label': str(obj)} for obj in queryset]
+        return JsonResponse(suggestions, safe=False)
 
 def start_break(request):
     if request.method == 'GET':

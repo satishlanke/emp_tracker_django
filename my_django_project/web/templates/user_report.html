@@ -28,7 +28,7 @@
   </ul> {% endcomment %}
 
   <div class="shadow_boox user_report_form">
-    <form id="" method="post" action="{% url 'addProject' %}">
+    <form id="" method="post" action="{% url 'user_report_view_test' %}">
       {% csrf_token %}
       <div class="row">
         <div class="col-md-">
@@ -38,11 +38,18 @@
               class="form-control"
               type="text"
               id="autocomplete-input_usrId"
+              value="{{ item.name}}"
             />
             <input
               type="hidden"
               id="selected-value_usersid"
               name="selected_value"
+            />
+            <input
+              type="hidden"
+              value="{{item.userId}}"
+              id="selected-value_userId"
+              name="selected_value_userId"
             />
             <!-- Hidden field to store selected value -->
             <ul id="autocomplete-results_userId"></ul>
@@ -53,36 +60,57 @@
       <div class="row">
         <div class="">
           <div class="mb-3">
-            <label for="dueDate" class="form-label">Due Date</label>
+            <label for="dueDate" class="form-label">start Date</label>
             <input
-              value="{{item.due_date| date:'Y-m-d'}}"
+              value="{{item.date}}"
               type="date"
               class="form-control"
-              name="due_date"
+              name="date"
               required
             />
           </div>
         </div>
       </div>
       <div class="text-center">
-        <button type="submit" class="btn btn-success">Save</button>
+        <button type="submit" class="btn btn-success">submit</button>
         <a href="{% url 'dashboard_view' %}" class="btn btn-secondary">Cancel</a>
       </div>
     </form>
   </div>
-
   <div class="tablediv shadow_boox">
-    <table class="table table-hover">
+    <table id="exampleDT" class="table table-hover">
       <thead>
         <th>UserID</th>
         <th>Username</th>
         <th>Date</th>
         <th>InTime</th>
         <th>OutTime</th>
-        <th>Shift</th>
         <th>Breaktime</th>
         <th>Productivity in hours</th>
       </thead>
+      <tbody>
+{% for i in items %}
+        <tr>
+            <td>{{i.user__id}}</td>
+        <td>{{i.user__username}}</td>
+        <td>{{i.created_at}}</td>
+        <td>{{i.login_time}}</td>
+        <td>{{i.logout_time}}</td>
+        <td>
+            <table>
+              {% for item in i.breaks %}
+                <tr>
+                    <td>{{item.start_time}}</td> <td><strong>to</strong></td>
+                    <td>{{item.end_time}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+        <td>{{i.prod_hours}}</td>
+        </tr>
+{% endfor %}
+
+      </tbody>
     </table>
   </div>
 </div>

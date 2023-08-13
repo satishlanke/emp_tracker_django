@@ -27,6 +27,8 @@ urlpatterns = [
     path('start_break/', views.start_break, name='start_break'),
     path('report_view/', views.report_view, name='report_view'),
     path('user_progress_view/', views.user_progress_view, name='user_progress_view'),
+    path('user_report_view_test/', views.user_report_view_test, name='user_report_view_test'),
+
 
 
     # path('end_break/<int:break_id>/', views.end_break, name='end_break')

@@ -95,8 +95,10 @@
                 </div>
                 <label for="status" class="form-label">Project Manager</label>
 
-                <input class="form-control" type="text" id="autocomplete-input">
+                <input class="form-control" type="text" value={{item.proj_manager.username}} id="autocomplete-input">
                 <input type="hidden" id="selected-value" name="selected_value">  <!-- Hidden field to store selected value -->
+                <input type="hidden" value="{{item.proj_manager.id}}" id="selected-value" name="selected_value_projmanager">  <!-- Hidden field to store selected value -->
+
                 <ul id="autocomplete-results"></ul>
               </div>
               <div class="text-center">

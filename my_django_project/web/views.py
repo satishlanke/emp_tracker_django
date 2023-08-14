@@ -232,7 +232,7 @@ def editProject(request, id):
         proj_isbn = request.POST.get('proj_isbn')
         proj_workflowType = request.POST.get('proj_workflowType')
         proj_status = request.POST.get('proj_status')
-        proj_manager = request.POST.get('selected_value')
+        proj_manager = request.POST.get('selected_value') or request.POST.get('selected_value_projmanager')
         user_proj_manager = CustomUser.objects.get(id=proj_manager)
         workflow_id = WorkflowType.objects.get(id=proj_workflowType)
         status_id = Status.objects.get(id=proj_status)

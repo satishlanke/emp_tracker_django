@@ -85,7 +85,7 @@
         <th>Date</th>
         <th>InTime</th>
         <th>OutTime</th>
-        <th>Breaktime</th>
+        <th>Break Start -- Break End</th>
         <th>Productivity in hours</th>
       </thead>
       <tbody>
@@ -97,7 +97,7 @@
         <td>{{i.login_time}}</td>
         <td>{{i.logout_time}}</td>
         <td>
-            <table>
+            <table class="table table-dark">
               {% for item in i.breaks %}
                 <tr>
                     <td>{{item.start_time}}</td> <td><strong>to</strong></td>

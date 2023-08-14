@@ -111,6 +111,19 @@ class Projects(models.Model):
     def __str__(self) -> str:
         return self.proj_name
 
+class Chapter(models.Model):
+    
+    chapter_name = models.CharField(max_length=50, null=True, verbose_name='Chapter Name')
+    number_pages = models.CharField(max_length=50, null=True)
+    due_date=models.DateField(null=True,blank=True)
+    chapter_status = models.ForeignKey(Status,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self) -> str:
+        return self.chapter_name
+
 class UserAttendance(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     login_time = models.DateTimeField()

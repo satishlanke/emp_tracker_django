@@ -23,6 +23,7 @@ admin.site.register(WorkflowType, WorkflowTypeAdmin)
 # Register CustomUser model with the custom admin class
 admin.site.register(Status)
 admin.site.register(Projects)
+admin.site.register(Chapter)
 
 admin.site.register(CustomUser)
 admin.site.register(Break)

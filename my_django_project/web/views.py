@@ -8,7 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 # Create your views here.
 # from django.shortcuts import render
-from .models import WorkflowType, CustomUser, Status, Projects, UserAttendance, Break, DesignationMaster, RoleMaster
+from .models import (WorkflowType, CustomUser, Status, Projects, UserAttendance, 
+                     Break, DesignationMaster, RoleMaster,Chapter)
 from django.db.models import F, ExpressionWrapper, DurationField
 from django.db.models.functions import TruncDate
 from django.db.models import Sum, Q
@@ -170,6 +171,12 @@ def logout_view(request):
 @login_required
 def project_view(request):
     if request.method == 'GET':
+        if request.user.is_superuser:
+            projects = Projects.objects.all()
+            context = {'projects': projects, }
+            return render(request, 'project.html', context)
+
+
         projects = Projects.objects.filter(proj_manager=request.user.id)
         print(request.user.id)
         context = {'projects': projects, }
@@ -211,6 +218,8 @@ def addProject(request):
                 proj_manager=user_proj_manager
 
             )
+            project_id=project.id
+        
         except Exception as e:
             raise e
         return redirect('project_view')
@@ -449,3 +458,103 @@ def handler500(request, *args, **argv):
                       context_instance=RequestContext(request))
     response.status_code = 500
     return response
+
+
+
+@login_required
+def chapter_view(request):
+    if request.method == 'GET':
+        status_items = Status.objects.all()
+        return render(request, 'createchapter.html', )
+    elif request.method == 'POST':
+        return render(request, 'createchapter.html')
+
+def chapter_view_byId(request,id):
+    if request.method == 'GET':
+        project = Projects.objects.get(id=id)
+        chapters=Chapter.objects.filter(project=project)
+        status_items = Status.objects.all()
+        context ={"project":project,'status_items':status_items}
+        return render(request, 'createchapter.html',context )
+    elif request.method == 'POST':
+        return render(request, 'createchapter.html')
+
+# @login_required
+def addChapter(request):
+    if request.method == 'GET':
+        workflow_items = WorkflowType.objects.all()
+        status_items = Status.objects.all()
+        context = {
+            'workflows': workflow_items,
+            'status': status_items,
+        }
+        return render(request, 'createproject.html', context)
+    elif request.method == 'POST':
+        proj_name = request.POST.get('proj_name')
+        proj_isbn = request.POST.get('proj_isbn')
+        proj_workflowType = request.POST.get('proj_workflowType')
+        proj_status = request.POST.get('proj_status')
+        workflow_id = WorkflowType.objects.get(id=proj_workflowType)
+        status_id = Status.objects.get(id=proj_status)
+        proj_no_of_chapters = request.POST.get('proj_no_of_chapters')
+        due_date = request.POST.get('due_date')
+        proj_manager = request.POST.get('selected_value')
+        user_proj_manager = CustomUser.objects.get(id=proj_manager)
+        try:
+
+            project = Projects.objects.create(
+                proj_name=proj_name,
+                proj_isbn=proj_isbn,
+                proj_workflowType=workflow_id,
+                proj_status=status_id,
+                proj_no_of_chapters=proj_no_of_chapters,
+                due_date=due_date,
+                proj_manager=user_proj_manager
+
+            )
+        except Exception as e:
+            raise e
+        return redirect('project_view')
+
+
+def editChapter(request, id):
+    if request.method == 'GET':
+        workflow_items = WorkflowType.objects.all()
+        status_items = Status.objects.all()
+        project = Projects.objects.get(id=id)
+        context = {
+            'workflows': workflow_items,
+            'status': status_items,
+            'item': project
+        }
+        return render(request, 'createproject.html', context)
+    elif request.method == 'POST':
+        proj_name = request.POST.get('proj_name')
+        proj_isbn = request.POST.get('proj_isbn')
+        proj_workflowType = request.POST.get('proj_workflowType')
+        proj_status = request.POST.get('proj_status')
+        proj_manager = request.POST.get('selected_value') or request.POST.get('selected_value_projmanager')
+        user_proj_manager = CustomUser.objects.get(id=proj_manager)
+        workflow_id = WorkflowType.objects.get(id=proj_workflowType)
+        status_id = Status.objects.get(id=proj_status)
+        proj_no_of_chapters = request.POST.get('proj_no_of_chapters')
+        due_date = request.POST.get('due_date')
+        try:
+            Projects.objects.filter(id=id).update(
+                proj_name=proj_name,
+                proj_isbn=proj_isbn,
+                proj_workflowType=workflow_id,
+                proj_status=status_id,
+                proj_no_of_chapters=proj_no_of_chapters,
+                due_date=due_date,
+                proj_manager=user_proj_manager
+            )
+        except Exception as e:
+            raise e
+        return redirect('project_view')
+
+
+def delete_chapter(request, id):
+    project = Projects.objects.get(id=id)
+    project.delete()
+    return redirect('project_view')

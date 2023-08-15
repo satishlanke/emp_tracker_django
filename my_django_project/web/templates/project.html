@@ -32,7 +32,7 @@
           {% for item in projects%}
           <tr>
             <th scope="row">{{forloop.counter}}</th>
-            <td><a href="chapter.html">{{item.proj_name}}</a></td>
+            <td><a href={% url 'chapter_view_byId' item.id %}>{{item.proj_name}}</a></td>
             <td>{{item.proj_workflowType.workflow_name}}</td>
             <td>{{item.proj_isbn}}</td>
             <td>{{item.proj_no_of_chapters}}</td>

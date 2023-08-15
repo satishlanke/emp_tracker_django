@@ -114,6 +114,7 @@ class Projects(models.Model):
 class Chapter(models.Model):
     
     chapter_name = models.CharField(max_length=50, null=True, verbose_name='Chapter Name')
+    project =models.ForeignKey(Projects,on_delete=models.CASCADE)
     number_pages = models.CharField(max_length=50, null=True)
     due_date=models.DateField(null=True,blank=True)
     chapter_status = models.ForeignKey(Status,on_delete=models.CASCADE)

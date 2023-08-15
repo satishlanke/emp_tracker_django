@@ -208,7 +208,17 @@ def addProject(request):
         user_proj_manager = CustomUser.objects.get(id=proj_manager)
         try:
 
-            project = Projects.objects.create(
+            project_exist = Projects.objects.get(proj_name=proj_name)
+            if project_exist:
+                messages.error(request, 'Project name already exist')
+                return redirect('project_view')
+
+        except Projects.DoesNotExist:
+            pass
+
+        try:
+
+            project = Projects(
                 proj_name=proj_name,
                 proj_isbn=proj_isbn,
                 proj_workflowType=workflow_id,
@@ -218,7 +228,7 @@ def addProject(request):
                 proj_manager=user_proj_manager
 
             )
-            project_id=project.id
+            project.save()
         
         except Exception as e:
             raise e
@@ -248,15 +258,15 @@ def editProject(request, id):
         proj_no_of_chapters = request.POST.get('proj_no_of_chapters')
         due_date = request.POST.get('due_date')
         try:
-            Projects.objects.filter(id=id).update(
-                proj_name=proj_name,
-                proj_isbn=proj_isbn,
-                proj_workflowType=workflow_id,
-                proj_status=status_id,
-                proj_no_of_chapters=proj_no_of_chapters,
-                due_date=due_date,
-                proj_manager=user_proj_manager
-            )
+           project= Projects.objects.get(id=id)
+           project.proj_name=proj_name
+           project.proj_isbn=proj_isbn
+           project.proj_workflowType=workflow_id
+           project.proj_status=status_id
+           project.proj_no_of_chapters=proj_no_of_chapters
+           project.due_date=due_date
+           project.proj_manager=user_proj_manager
+           project.save()
         except Exception as e:
             raise e
         return redirect('project_view')
@@ -372,19 +382,7 @@ def add_breaks(list1, break_data):
 
         
 
-        # Find the corresponding entry in list1 based on user_id and date
-        # corresponding_entry = next(
-        #     (item for item in list1 if item['user__id'] == user_id))
-
-        # if corresponding_entry:
-        #     # Append the entry to list1
-        #     corresponding_entry['breaks'].append(
-        #         {
-        #             'start_time': start_time,
-        #             'end_time': end_time,
-        #             'created_at': created_at,
-        #             'duration': duration
-        #         })
+       
     return actual_list
 
 # Add breaks to list1
@@ -464,8 +462,13 @@ def handler500(request, *args, **argv):
 @login_required
 def chapter_view(request):
     if request.method == 'GET':
-        status_items = Status.objects.all()
-        return render(request, 'createchapter.html', )
+        projects= Projects.objects.all()
+        project_data = []
+        for project in projects:
+            project_chapters = Chapter.objects.filter(project_id=project.id)
+            project_data.append({"project": project, "chapters": project_chapters})
+            context ={'data': project_data}
+        return render(request, 'chapter.html',context )
     elif request.method == 'POST':
         return render(request, 'createchapter.html')
 
@@ -474,7 +477,7 @@ def chapter_view_byId(request,id):
         project = Projects.objects.get(id=id)
         chapters=Chapter.objects.filter(project=project)
         status_items = Status.objects.all()
-        context ={"project":project,'status_items':status_items}
+        context ={"project":project,'status_items':status_items,"chapters":chapters}
         return render(request, 'createchapter.html',context )
     elif request.method == 'POST':
         return render(request, 'createchapter.html')
@@ -482,39 +485,38 @@ def chapter_view_byId(request,id):
 # @login_required
 def addChapter(request):
     if request.method == 'GET':
-        workflow_items = WorkflowType.objects.all()
         status_items = Status.objects.all()
         context = {
-            'workflows': workflow_items,
             'status': status_items,
         }
         return render(request, 'createproject.html', context)
     elif request.method == 'POST':
-        proj_name = request.POST.get('proj_name')
-        proj_isbn = request.POST.get('proj_isbn')
-        proj_workflowType = request.POST.get('proj_workflowType')
-        proj_status = request.POST.get('proj_status')
-        workflow_id = WorkflowType.objects.get(id=proj_workflowType)
-        status_id = Status.objects.get(id=proj_status)
-        proj_no_of_chapters = request.POST.get('proj_no_of_chapters')
-        due_date = request.POST.get('due_date')
-        proj_manager = request.POST.get('selected_value')
-        user_proj_manager = CustomUser.objects.get(id=proj_manager)
-        try:
+        chapter_name = request.POST.getlist('chapter_name')
+        number_pages = request.POST.getlist('number_pages')
+        due_date = request.POST.getlist('due_date')
+        chapter_status = request.POST.getlist('chapter_status')
+        chapter_id = request.POST.getlist('chapter_id')
+        for i in range(0, len(chapter_id)):
+            Chapter.objects.filter(id=int(chapter_id[i])).update(chapter_name=chapter_name[i],
+                                                                 due_date=due_date[i],
+                                                                 number_pages=int(number_pages[i]),
+                                                                 chapter_status=Status.objects.get(id=int(chapter_status[i])))
 
-            project = Projects.objects.create(
-                proj_name=proj_name,
-                proj_isbn=proj_isbn,
-                proj_workflowType=workflow_id,
-                proj_status=status_id,
-                proj_no_of_chapters=proj_no_of_chapters,
-                due_date=due_date,
-                proj_manager=user_proj_manager
+        # try:
 
-            )
-        except Exception as e:
-            raise e
-        return redirect('project_view')
+        #         project = Projects.objects.create(
+        #         proj_name=proj_name,
+        #         proj_isbn=proj_isbn,
+        #         proj_workflowType=workflow_id,
+        #         proj_status=status_id,
+        #         proj_no_of_chapters=proj_no_of_chapters,
+        #         due_date=due_date,
+        #         proj_manager=user_proj_manager
+
+        #     )
+        # except Exception as e:
+        #     raise e
+        return redirect('chapter_view')
 
 
 def editChapter(request, id):
@@ -555,6 +557,8 @@ def editChapter(request, id):
 
 
 def delete_chapter(request, id):
-    project = Projects.objects.get(id=id)
-    project.delete()
-    return redirect('project_view')
+    chapter = Chapter.objects.get(id=id)
+    project_id = chapter.project.id
+   
+    chapter.delete()
+    return redirect('chapter_view_byId',id=project_id)

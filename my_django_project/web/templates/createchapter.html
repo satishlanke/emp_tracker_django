@@ -36,7 +36,6 @@
 
   <div class="container mt-3">
     <div class="table-responsive">
-      <form id="addChapterForm" action="chapter.html">
         <table class="table table-hover table-bordered chapter-form-table">
           <thead class="table-light text-center">
             <tr>
@@ -44,30 +43,35 @@
               <th scope="col">Number of Pages</th>
               <th scope="col">Due Date</th>
               <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+
             </tr>
           </thead>
           <tbody>
-            {% for n in range(5) %}
+        <form id=""  method="post" action="{% url 'addChapter' %}" validate>
+              {% csrf_token %}
+            {% for chapter in chapters %}
             <tr>
               <td>
-                <div class="mb-3"> <input type="text" name="chapter_name" class="form-control" id="NAME" value=""
+                <div class="mb-3"> <input type="text" value="{{chapter.chapter_name}}" name="chapter_name" class="form-control" id="NAME" 
                     required>
+                    <input type="hidden" value="{{chapter.id}}" name="chapter_id">
                 </div>
               </td>
               <td>
-                <div class="mb-3"> <input type="number" name="number_pages" class="form-control" id="numberOfPages#NUM#"
+                <div class="mb-3"> <input type="number"  value="{{chapter.number_pages}}" name="number_pages" class="form-control" id="numberOfPages#NUM#"
                     required> </div>
               </td>
               <td>
-                <div class="mb-3"> <input type="date" name="due_date" name="chapter_status" class="form-control"
+                <div class="mb-3"> <input type="date" name="due_date" value="{{chapter.due_date | date:'Y-m-d'}}" name="chapter_status" class="form-control"
                     id="dueDate#NUM#" required> </div>
               </td>
               <td>
                 <div class="mb-3">
                   <select name="chapter_status" class="form-select" id="status" required>
 
-                    {% if item.chapter_status %}
-                    <option value="{{item.chapter_status.id}}">{{item.chapter_status.status_name}}</option>
+                    {% if chapter.chapter_status %}
+                    <option value="{{chapter.chapter_status.id}}">{{chapter.chapter_status.status_name}}</option>
                     {% else %}
                     <option value="">select status</option>
                     {% endif %}
@@ -77,12 +81,17 @@
                   </select>
                 </div>
               </td>
+              <td>
+                <a  href="#myModal" data-target="#myModal" data-toggle="modal" onClick = "openSolution('{{ chapter.id }}')">
+                  <button type="button"  class="btn btn-danger btn-sm"><i class="fa fa-trash fa-lg"></i></button>
+              </a> 
+              </td>
             </tr>
             {% endfor %}
-            
           </tbody>
         </table>
-        <button class="btn btn-outline-secondary" id="add-row">+</button>
+        <!--<button class="btn btn-outline-secondary" id="add-row">+</button>-->
+        
         <div class="text-center">
           <button type="submit" class="btn btn-success">Save</button>
           <a href="chapter.html" class="btn btn-secondary">Cancel</a>
@@ -90,8 +99,33 @@
       </form>
     </div>
   </div>
+  <div class="modal fade" tabindex="-1" id="myModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Chapter</h3>
+            </div>
+            <div class="modal-body background-color: #FFFFFF;">
+                <p>Do you want to really delete?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="confirmationYes()" href="#">Yes</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+            </div>
+        </div>  
+    </div>
 </div>
-
+</div>
+<script>            
+  function openSolution(id){               
+      $('#myModal').data('id', id);                
+  } 
+  
+  function confirmationYes(){
+      var id = $('#myModal').data('id');                                         
+      window.location.href ="/delete_chapter/"+id+"";
+  }                                                                      
+</script> 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>

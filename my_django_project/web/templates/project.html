@@ -11,8 +11,19 @@
       </div>
     </div>
   </div>
-
+  
   <div class="container mt-3">
+    
+    {% if messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      
+    </div>
+    <br>
+  {% endif %}
     <div class="table-responsive">          
       <table id="exampleDT" class="table table-hover table-striped ">
         <thead class="table-light text-center">

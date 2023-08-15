@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 # Create your models here.
 
 class WorkflowType(models.Model):
@@ -100,13 +101,52 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Projects(models.Model):
     
     proj_name = models.CharField(max_length=50, null=True, verbose_name='Project Name')
-    # project_count = models.IntegerField(null=True)
     proj_isbn = models.CharField(max_length=50, null=True)
     proj_workflowType = models.ForeignKey(WorkflowType,on_delete=models.CASCADE)
     proj_status = models.ForeignKey(Status,on_delete=models.CASCADE)
     proj_no_of_chapters = models.IntegerField(null=True)
     due_date=models.DateField(null=True,blank=True)
     proj_manager = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+
+
+    
+    def update_no_of_chapters(self):
+        self.proj_no_of_chapters = self.chapter_set.count()
+        self.save()
+
+    def update_chapters(self):
+        existing_chapters = self.chapter_set.all()
+        existing_chapter_count = existing_chapters.count()
+        
+        if int(self.proj_no_of_chapters) > existing_chapter_count:
+            for chapter_num in range(existing_chapter_count + 1, int(self.proj_no_of_chapters) + 1):
+                Chapter.objects.create(
+                    chapter_name=f"Chapter {chapter_num}",
+                    project=self,
+                    number_pages=0
+
+                    # ... other chapter fields ...
+                )
+        elif self.proj_no_of_chapters < existing_chapter_count:
+            chapters_to_delete = existing_chapters[self.proj_no_of_chapters:]
+            chapters_to_delete.delete()
+    def create_chapters(self):
+        for chapter_num in range(1, int(self.proj_no_of_chapters) + 1):
+            Chapter.objects.create(
+                chapter_name=f"Chapter {str(chapter_num)}",
+                project=self,
+                number_pages=0
+                # ... other chapter fields ...
+            )
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new:
+            self.create_chapters()
+        else:
+            self.update_chapters()
+   
 
     def __str__(self) -> str:
         return self.proj_name
@@ -117,7 +157,7 @@ class Chapter(models.Model):
     project =models.ForeignKey(Projects,on_delete=models.CASCADE)
     number_pages = models.CharField(max_length=50, null=True)
     due_date=models.DateField(null=True,blank=True)
-    chapter_status = models.ForeignKey(Status,on_delete=models.CASCADE)
+    chapter_status = models.ForeignKey(Status,on_delete=models.CASCADE,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
 
@@ -125,6 +165,13 @@ class Chapter(models.Model):
     def __str__(self) -> str:
         return self.chapter_name
 
+# @receiver(post_delete, sender=Chapter)
+# def decrement_project_no_of_chapters(sender, instance, **kwargs):
+#     instance.project.proj_no_of_chapters -= 1
+#     instance.project.save()
+@receiver(post_delete, sender=Chapter)
+def update_project_no_of_chapters(sender, instance, **kwargs):
+    instance.project.update_no_of_chapters()
 class UserAttendance(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     login_time = models.DateTimeField()

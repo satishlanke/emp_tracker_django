@@ -462,8 +462,18 @@ def handler500(request, *args, **argv):
 @login_required
 def chapter_view(request):
     if request.method == 'GET':
-        projects= Projects.objects.all()
         project_data = []
+        if request.user.is_superuser:
+            projects = Projects.objects.all()
+            for project in projects:
+                project_chapters = Chapter.objects.filter(project_id=project.id)
+                project_data.append({"project": project, "chapters": project_chapters})
+                context ={'data': project_data}
+            return render(request, 'chapter.html', context)
+
+
+        projects = Projects.objects.filter(proj_manager=request.user.id)
+        # projects= Projects.objects.all()
         for project in projects:
             project_chapters = Chapter.objects.filter(project_id=project.id)
             project_data.append({"project": project, "chapters": project_chapters})

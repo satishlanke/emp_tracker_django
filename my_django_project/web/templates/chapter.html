@@ -26,12 +26,18 @@
             </button>
         </h2>
         <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse">
+          
+          
             <div class="accordion-body">
                 <ul>
                     {% for chapter in item.chapters %}
                     <li>{{ chapter.chapter_name }}</li>
                     {% endfor %}
                 </ul>
+                <div class="p-3 d-flex flex-row justify-content-center">
+                  <a class="btn btn-primary" href={% url 'chapter_view_byId' item.project.id %}>Edit</a>
+            
+                </div>
             </div>
         </div>
     </div>
